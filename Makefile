@@ -16,6 +16,7 @@ install:     ## Install dependencies
 
 run:         ## Deploy the app locally and run an AppSync GraphQL test invocation
 	./run.sh
+
 start:
 	localstack start -d
 
