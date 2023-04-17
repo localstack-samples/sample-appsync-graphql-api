@@ -1,0 +1,91 @@
+service: test-appsync
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  deploymentBucket:
+    name: testbucket
+
+resources:
+  Resources:
+    DDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: table1
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+    RDSCluster:
+      Type: AWS::RDS::DBCluster
+      Properties:
+        DatabaseName: ${self:custom.rds.dbname}
+        Engine: aurora-postgresql
+        DBClusterIdentifier: ${self:custom.rds.dbcluster}
+        MasterUsername: ${self:custom.rds.username}
+        MasterUserPassword: ${self:custom.rds.password}
+    RDSDatabaseSecret:
+      Type: AWS::SecretsManager::Secret
+      Properties:
+        Name: rds-db-secret
+        SecretString: ${self:custom.rds.password}
+
+custom:
+  rds:
+    dbcluster: c1
+    dbname: testappsync
+    username: testuser
+    password: testpass
+  appSync:
+    name: test-api
+    schema: schema.graphql
+    authenticationType: API_KEY
+    dataSources:
+      - type: AMAZON_DYNAMODB
+        name: ds_ddb
+        description: DynamoDB data source
+        config:
+          tableName: { Ref: DDBTable }
+      - type: RELATIONAL_DATABASE
+        name: ds_rds
+        description: RDS data source
+        config:
+          databaseName: ${self:custom.rds.dbname}
+          dbClusterIdentifier: ${self:custom.rds.dbcluster}
+          awsSecretStoreArn: { Ref: RDSDatabaseSecret }
+    mappingTemplatesLocation: ./templates
+    mappingTemplates:
+      # mapping templates for DynamoDB data source
+      - type: Mutation
+        field: addPostDDB
+        dataSource: ds_ddb
+        request: ddb.PutItem.request.vlt
+        response: ddb.PutItem.response.vlt
+      - type: Query
+        field: getPostsDDB
+        dataSource: ds_ddb
+        request: ddb.Scan.request.vlt
+        response: ddb.Scan.response.vlt
+      # mapping templates for RDS Aurora data source
+      - type: Mutation
+        field: addPostRDS
+        dataSource: ds_rds
+        request: rds.insert.request.vlt
+        response: rds.insert.response.vlt
+      - type: Query
+        field: getPostsRDS
+        dataSource: ds_rds
+        request: rds.select.request.vlt
+        response: rds.select.response.vlt
+  localstack:
+    stages:
+      - local
+    endpoints:
+      AppSync: http://localhost:4605
+
+plugins:
+  - serverless-localstack
+  - serverless-appsync-plugin
+  - serverless-deployment-bucket

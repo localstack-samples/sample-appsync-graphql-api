@@ -1,2 +1,2 @@
-# appsync-graphql-api-sample
-LocalStack sample app using an AppSync GraphQL API
+# AppSync GraphQL APIs for DynamoDB and RDS Aurora Postgres
+

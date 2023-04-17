@@ -1,0 +1,14 @@
+{
+    "description": "AppSync GraphQL APIs for DynamoDB and RDS Aurora Postgres",
+    "license": "Apache-2.0",
+    "repository": "https://github.com/localstack/appsync-graphql-api-sample",
+    "devDependencies": {
+      "serverless": "^2.0.0",
+      "serverless-localstack": "^1.0.5",
+      "serverless-appsync-plugin": "1.1.2",
+      "serverless-deployment-bucket": "^1.1.0"
+    },
+    "scripts": {
+      "deploy": "sls deploy --stage local"
+    }
+  }
