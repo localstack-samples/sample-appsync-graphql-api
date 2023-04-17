@@ -8,8 +8,8 @@ usage:       ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 install:     ## Install dependencies
-	@test -e node_modules || npm install
-	@which serverless || npm install -g serverless
+	@test -e node_modules || yarn install
+	@which serverless || yarn add serverless
 	@which localstack || pip install localstack
 	@which awslocal || pip install awscli-local
 	@test -e .venv || (python3 -m venv .venv; source .venv/bin/activate; pip install -r requirements.txt)
