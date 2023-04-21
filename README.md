@@ -8,6 +8,8 @@ The AppSync GraphQL APIs for DynamoDB and RDS Aurora PostgreSQL application samp
 
 The following diagram shows the architecture that this sample application builds and deploys:
 
+![Architecture diagram for AppSync GraphQL APIs for DynamoDB and RDS Aurora PostgreSQL](./images/appsync-datasource-architecture.png)
+
 We are using the following AWS services and third-party integrations to build our infrastructure:
 
 - [AppSync](https://docs.localstack.cloud/user-guide/aws/appsync/) to integrate with the Data Sources (DynamoDB, RDS) and to provide a GraphQL API which can be connected to a WebSocket connection.
@@ -57,7 +59,7 @@ After a few seconds, the infrastructure should be deployed successfully. Fetch t
 
 ```sh
 export APPSYNC_URL=http://localhost:4566/graphql
-export api_id=$(awslocal appsync list-graphql-apis | jq -r '(.graphqlApis[] | select(.name=="test-api")).apiId')
+api_id=$(awslocal appsync list-graphql-apis | jq -r '(.graphqlApis[] | select(.name=="test-api")).apiId')
 api_key=$(awslocal appsync create-api-key --api-id $api_id | jq -r .apiKey.id)
 echo $api_key
 echo $api_id
@@ -95,7 +97,7 @@ Let us now send a query request to the AppSync API to retrieve all posts from th
 curl -H "Content-Type: application/json" -H "x-api-key: $api_key" -d '{"query":"query {getPostsDDB{id}}"}' $APPSYNC_URL/$api_id
 ```
 
-We can now perform a scan operation on the DynamoDB table which will include a entry with `id123` as the `id`:
+We can now perform a scan operation on the DynamoDB table which will include an entry with `id123` as the `id`:
 
 ```sh
 awslocal dynamodb scan --table-name table1

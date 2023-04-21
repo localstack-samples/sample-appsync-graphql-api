@@ -47,4 +47,5 @@ jobs:
 
       - name: Run the application
         run: |
+          awslocal s3 mb s3://testbucket
           make run
