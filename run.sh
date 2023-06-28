@@ -19,4 +19,10 @@ echo "Scanning items from DynamoDB table - should include entry with 'id123':" &
 awslocal dynamodb scan --table-name table1 && \
 echo "Now trying to invoke the AppSync API for RDS integration." && \
 curl -H "Content-Type: application/json" -H "x-api-key: $api_key" -d '{"query":"mutation {addPostRDS(id: \"id123\"){id}}"}' $APPSYNC_URL/$api_id && \
-curl -H "Content-Type: application/json" -H "x-api-key: $api_key" -d '{"query":"query {getPostsRDS{id}}"}' $APPSYNC_URL/$api_id
+result=$(curl -H "Content-Type: application/json" -H "x-api-key: $api_key" -d '{"query":"query {getPostsRDS{id}}"}' $APPSYNC_URL/$api_id)
+echo $result
+expected_id=$(echo $result | jq -r .data.getPostsRDS[0].id)
+if [[ $expected_id != "id123" ]]; then
+    echo expected ID not found, was $expected_id
+    exit 1
+fi
