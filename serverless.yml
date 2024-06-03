@@ -2,7 +2,7 @@ service: test-appsync
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs18.x
   deploymentBucket:
     name: testbucket
 

@@ -1,7 +1,13 @@
 #!/bin/bash
+set -e
 
+# Set the AppSync URL to the local endpoint
 APPSYNC_URL=http://localhost:4566/graphql
 
+# Create a new S3 bucket
+awslocal s3 mb s3://testbucket
+
+# Deploy the Serverless app to the local environment and run the tests
 echo "Deploying Serverless app to local environment"; \
 SLS_DEBUG=1 yarn deploy && \
 echo "Serverless app successfully deployed." && \
