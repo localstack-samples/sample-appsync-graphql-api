@@ -1,1 +1,1 @@
-$util.toJson($context.result)
+$util.toJson($context.result.items)
