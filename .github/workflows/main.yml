@@ -46,6 +46,9 @@ jobs:
           LOCALSTACK_DEBUG=1 LOCALSTACK_AUTH_TOKEN=$LOCALSTACK_AUTH_TOKEN lstk start --non-interactive
           echo "Startup complete"
 
+      - name: Set up the AWS profile for lstk aws
+        run: lstk setup aws
+
       - name: Run the application
         run: |
           lstk aws s3 mb s3://testbucket
