@@ -27,9 +27,9 @@ We are using the following AWS services and third-party integrations to build ou
 
 ## Prerequisites
 
-- A valid [LocalStack for AWS license](https://localstack.cloud/pricing). Your license provides a [`LOCALSTACK_AUTH_TOKEN`](https://docs.localstack.cloud/getting-started/auth-token/) to activate LocalStack.
-- [`localstack` CLI](https://docs.localstack.cloud/getting-started/installation/#localstack-cli).
-- [AWS CLI](https://docs.localstack.cloud/user-guide/integrations/aws-cli/) with the [`awslocal` wrapper](https://docs.localstack.cloud/user-guide/integrations/aws-cli/#localstack-aws-cli-awslocal).
+- A valid [LocalStack for AWS license](https://localstack.cloud/pricing). Your license provides a [`LOCALSTACK_AUTH_TOKEN`](https://docs.localstack.cloud/aws/getting-started/auth-token/) to activate LocalStack.
+- [`lstk` CLI](https://docs.localstack.cloud/aws/developer-tools/running-localstack/lstk/).
+- [AWS CLI](https://docs.localstack.cloud/user-guide/integrations/aws-cli/) (required by `lstk aws`).
 - [Python](https://www.python.org/downloads/)
 - [`cURL`](https://curl.se/)
 - [`wscat`](https://github.com/websockets/wscat)
@@ -70,8 +70,8 @@ After a few seconds, the infrastructure should be deployed successfully. Fetch t
 
 ```sh
 export APPSYNC_URL=http://localhost:4566/graphql
-api_id=$(awslocal appsync list-graphql-apis | jq -r '(.graphqlApis[] | select(.name=="test-api")).apiId')
-api_key=$(awslocal appsync create-api-key --api-id $api_id | jq -r .apiKey.id)
+api_id=$(lstk aws appsync list-graphql-apis | jq -r '(.graphqlApis[] | select(.name=="test-api")).apiId')
+api_key=$(lstk aws appsync create-api-key --api-id $api_id | jq -r .apiKey.id)
 echo $api_key
 echo $api_id
 ```
@@ -111,7 +111,7 @@ curl -H "Content-Type: application/json" -H "x-api-key: $api_key" -d '{"query":"
 We can now perform a scan operation on the DynamoDB table which will include an entry with `id123` as the `id`:
 
 ```sh
-awslocal dynamodb scan --table-name table1
+lstk aws dynamodb scan --table-name table1
 {
     "Items": [
         {
