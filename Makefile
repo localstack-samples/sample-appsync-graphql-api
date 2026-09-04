@@ -9,8 +9,7 @@ usage:       ## Show this help
 
 install:     ## Install dependencies
 	@test -e node_modules || yarn install
-	@which localstack || pip install localstack
-	@which awslocal || pip install awscli-local
+	@which lstk || npm install -g @localstack/lstk
 	@test -e .venv || (python3 -m venv .venv; source .venv/bin/activate; pip install -r requirements.txt)
 
 run:         ## Deploy the app locally and run an AppSync GraphQL test invocation
@@ -18,17 +17,17 @@ run:         ## Deploy the app locally and run an AppSync GraphQL test invocatio
 
 start:		## Start LocalStack
 	@test -n "${LOCALSTACK_AUTH_TOKEN}" || (echo "LOCALSTACK_AUTH_TOKEN is not set. Find your token at https://app.localstack.cloud/workspace/auth-token"; exit 1)
-	@LOCALSTACK_AUTH_TOKEN=$(LOCALSTACK_AUTH_TOKEN) localstack start -d
+	@LOCALSTACK_AUTH_TOKEN=$(LOCALSTACK_AUTH_TOKEN) lstk start --non-interactive
 
 stop:
 	@echo
-	localstack stop
+	lstk stop
 ready:
 	@echo Waiting on the LocalStack container...
-	@localstack wait -t 30 && echo Localstack is ready to use! || (echo Gave up waiting on LocalStack, exiting. && exit 1)
+	@lstk status && echo Localstack is ready to use! || (echo Gave up waiting on LocalStack, exiting. && exit 1)
 
 logs:
-	@localstack logs > logs.txt
+	@lstk logs > logs.txt
 
 test-ci:
 	make start install ready run; return_code=`echo $$?`;\

@@ -27,6 +27,7 @@ resources:
         DBClusterIdentifier: ${self:custom.rds.dbcluster}
         MasterUsername: ${self:custom.rds.username}
         MasterUserPassword: ${self:custom.rds.password}
+        EnableHttpEndpoint: true
     RDSDatabaseSecret:
       Type: AWS::SecretsManager::Secret
       Properties:

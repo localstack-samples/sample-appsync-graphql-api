@@ -5,15 +5,15 @@ set -e
 APPSYNC_URL=http://localhost:4566/graphql
 
 # Create a new S3 bucket
-awslocal s3 mb s3://testbucket
+lstk aws s3 mb s3://testbucket
 
 # Deploy the Serverless app to the local environment and run the tests
 echo "Deploying Serverless app to local environment"; \
 SLS_DEBUG=1 yarn deploy && \
 echo "Serverless app successfully deployed." && \
-api_id=$(awslocal appsync list-graphql-apis | jq -r '(.graphqlApis[] | select(.name=="test-api")).apiId') && \
+api_id=$(lstk aws appsync list-graphql-apis | jq -r '(.graphqlApis[] | select(.name=="test-api")).apiId') && \
 echo "DEBUG: api_id is: $api_id" && \
-api_key=$(awslocal appsync create-api-key --api-id $api_id | jq -r .apiKey.id) && \
+api_key=$(lstk aws appsync create-api-key --api-id $api_id | jq -r .apiKey.id) && \
 echo "DEBUG: api_key is: $api_key" && \
 echo "Starting a WebSocket client to subscribe to GraphQL mutation operations." && \
 source .venv/bin/activate && \
@@ -22,7 +22,7 @@ echo "Now trying to invoke the AppSync API for DynamoDB integration under $APPSY
 curl -H "Content-Type: application/json" -H "x-api-key: $api_key" -d '{"query":"mutation {addPostDDB(id: \"id123\"){id}}"}' $APPSYNC_URL/$api_id && \
 curl -H "Content-Type: application/json" -H "x-api-key: $api_key" -d '{"query":"query {getPostsDDB{id}}"}' $APPSYNC_URL/$api_id && \
 echo "Scanning items from DynamoDB table - should include entry with 'id123':" && \
-result_ddb_scan=$(awslocal dynamodb scan --table-name table1) && \
+result_ddb_scan=$(lstk aws dynamodb scan --table-name table1) && \
 echo $result_ddb_scan | jq -r . && \
 echo "Now trying to invoke the AppSync API for RDS integration." && \
 curl -H "Content-Type: application/json" -H "x-api-key: $api_key" -d '{"query":"mutation {addPostRDS(id: \"id123\"){id}}"}' $APPSYNC_URL/$api_id && \
